@@ -312,7 +312,7 @@ function dash(){
   const c = S.chaser; if (!c || c.phase!=='dash') return;
   const tgt = c.tgt; c.tx = tgt.alive ? tgt.x : c.tx; c.ty = tgt.alive ? tgt.y : c.ty;
   let dx=c.tx-c.x, dy=c.ty-c.y; const L=Math.hypot(dx,dy)||1; dx/=L; dy/=L;
-  const len = L + 2*K;
+  const len = 2*ARENA; // the charge line runs across the whole arena
   S.fx.push({kind:'dash', x:c.x, y:c.y, dx, dy, len, t:S.t});
   alive().forEach(p => {
     const vx=p.x-c.x, vy=p.y-c.y, proj=vx*dx+vy*dy, perp=Math.abs(vx*dy-vy*dx);
@@ -437,7 +437,7 @@ function draw(){
   const c = S.chaser;
   if (c && !(c.phase==='gone' && t-c.gone>0.5)) {
     if (S.tele && c.phase==='cone') { ctx.fillStyle='rgba(78,163,255,.14)'; ctx.strokeStyle='rgba(78,163,255,.6)'; ctx.beginPath(); ctx.moveTo(X(c.x),Y(c.y)); ctx.arc(X(c.x),Y(c.y),CONE*s,c.dir-Math.PI/4,c.dir+Math.PI/4); ctx.closePath(); ctx.fill(); ctx.stroke(); }
-    if (S.tele && c.phase==='dash') { let dx=c.tgt.x-c.x, dy=c.tgt.y-c.y; const L=Math.hypot(dx,dy)||1; drawRect(c.x,c.y,dx/L,dy/L,L+2*K,'rgba(255,90,106,.18)',X,Y,s); }
+    if (S.tele && c.phase==='dash') { let dx=c.tgt.x-c.x, dy=c.tgt.y-c.y; const L=Math.hypot(dx,dy)||1; drawRect(c.x,c.y,dx/L,dy/L,2*ARENA,'rgba(255,90,106,.18)',X,Y,s); }
     ctx.fillStyle='#b48cff'; ctx.strokeStyle='#1a1030'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.arc(X(c.x),Y(c.y),1.1*s,0,7); ctx.fill(); ctx.stroke();
     ctx.fillStyle='#1a1030'; ctx.font=`700 ${0.9*s}px sans-serif`; ctx.fillText('巡',X(c.x),Y(c.y)+1);
