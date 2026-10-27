@@ -149,7 +149,8 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
 (() => {
 // Floor proportions tuned from the in-game screenshot and the user's feedback. K scales attack sizes.
 const ARENA = 17, OUTER_LINE = 0.8*ARENA, INNER = 0.55*ARENA, RING = 0.64*ARENA, K = 0.87;
-const HAWK_R = 6.3, CENTER_R = 5, PR = 0.6, CONE = 16*K, DASH_W = 2*K;
+const HAWK_R = 7.6, CENTER_R = 8.5, // ring blasts reach the neighbouring line; center blast reaches the black circle
+      PR = 0.6, CONE = 16*K, DASH_W = 2*K;
 const RG = RING, EV = INNER, OD = OUTER_LINE, OR = OUTER_LINE + 0.9; // run on lights, even on black circle, odd on outer line
 const SPEED = 6, SPRINT = 1.3, END = 20;
 const HAWK_T = k => 2.5 + 1.8 * k;          // 10 sets: 0-3 ring, 4 center, 5-8 ring, 9 center
@@ -281,7 +282,7 @@ function hawk(k){
     [0,Math.PI].map(o => { const a = ang(k<=3?k:k-5)+o; return {x:Math.cos(a)*RING, y:Math.sin(a)*RING, r:HAWK_R}; });
   spots.forEach(s => {
     S.fx.push({kind:'blast', ...s, t:S.t});
-    alive().forEach(p => { if (Math.hypot(p.x-s.x,p.y-s.y) < s.r + PR) kill(p,'被鷹式爆彈炸到'); });
+    alive().forEach(p => { if (Math.hypot(p.x-s.x,p.y-s.y) < s.r) kill(p,'被鷹式爆彈炸到'); });
   });
 }
 function targetOr(n){
@@ -329,9 +330,9 @@ function planTarget(n, t){
   const wps = PLAN[n]; let w = wps[0];
   for (const x of wps) if (x[0] <= t) w = x;
   if (w[1] === 0) return {x:0, y:0, bait:false};
-  const jitter = w[3] ? 0 : ((n%4)-1.5)*0.05;
-  const a = ang(w[2]) + jitter;
-  return {x:Math.cos(a)*w[1], y:Math.sin(a)*w[1], bait:!!w[3], a, r:w[1]};
+  const a = ang(w[2]);
+  const rj = w[3] ? 0 : ((n%4)-1.5)*0.35; // spread along the line, not across it
+  return {x:Math.cos(a)*(w[1]+rj), y:Math.sin(a)*(w[1]+rj), bait:!!w[3], a, r:w[1]+rj};
 }
 
 function moveToward(p, tg, maxd){
